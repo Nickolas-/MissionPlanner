@@ -1918,7 +1918,7 @@ namespace GMap.NET.WindowsForms
                     GMapOverlay o = Overlays[i];
                     if (o != null && o.IsVisibile)
                     {
-                        foreach (GMapMarker m in o.Markers)
+                        foreach (GMapMarker m in o.Markers.ToList())
                         {
                             if (m.IsVisible && m.IsHitTestVisible)
                             {
@@ -1939,7 +1939,7 @@ namespace GMap.NET.WindowsForms
                             }
                         }
 
-                        foreach (GMapRoute m in o.Routes)
+                        foreach (GMapRoute m in o.Routes.ToList())
                         {
                             if (m.IsVisible && m.IsHitTestVisible)
                             {
@@ -1966,7 +1966,7 @@ namespace GMap.NET.WindowsForms
                             }
                         }
 
-                        foreach (GMapPolygon m in o.Polygons)
+                        foreach (GMapPolygon m in o.Polygons.ToList())
                         {
                             if (m.IsVisible && m.IsHitTestVisible)
                             {

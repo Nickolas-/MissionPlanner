@@ -32,6 +32,10 @@ using ZedGraph;
 using LogAnalyzer = MissionPlanner.Utilities.LogAnalyzer;
 using TableLayoutPanelCellPosition = System.Windows.Forms.TableLayoutPanelCellPosition;
 using UnauthorizedAccessException = System.UnauthorizedAccessException;
+using SIGINT;
+using SkiaSharp;
+using SevenZip.Compression.LZ;
+using GMap.NET.WindowsForms.ToolTips;
 
 // written by michael oborne
 
@@ -46,11 +50,14 @@ namespace MissionPlanner.GCSViews
         public static bool threadrun;
         public SplitContainer MainHcopy;
         internal static GMapOverlay geofence;
+        internal static GMapOverlay sigintOverlay;
         internal static GMapOverlay photosoverlay;
         internal static GMapOverlay poioverlay = new GMapOverlay("POI");
         internal static GMapOverlay rallypointoverlay;
         internal static GMapOverlay tfrpolygons;
         internal GMapMarker CurrentGMapMarker;
+
+        internal static SigintService SigintService;
 
         internal PointLatLng MouseDownStart;
 
@@ -240,6 +247,15 @@ namespace MissionPlanner.GCSViews
             myhud = hud1;
             MainHcopy = MainH;
 
+            if (SigintService == null)
+            {
+                SigintService = new SigintService(MainV2.comPort);
+                SigintService.Start();
+                SigintService.OnError += SigintService_OnError;
+                SigintService.OnSessionData += SigintService_OnSessionData;
+            }
+            
+
             mymap.Paint += mymap_Paint;
 
             // populate the unmodified base list
@@ -355,6 +371,7 @@ namespace MissionPlanner.GCSViews
 
             gMapControl1.OnMarkerEnter += gMapControl1_OnMarkerEnter;
             gMapControl1.OnMarkerLeave += gMapControl1_OnMarkerLeave;
+            gMapControl1.OnPolygonClick += GMapControl1_OnPolygonClick;
 
             gMapControl1.RoutesEnabled = true;
             gMapControl1.PolygonsEnabled = true;
@@ -385,6 +402,9 @@ namespace MissionPlanner.GCSViews
 
             gMapControl1.Overlays.Add(poioverlay);
 
+            sigintOverlay = new GMapOverlay("Sigint");
+            gMapControl1.Overlays.Add(sigintOverlay);
+
             float gspeedMax = Settings.Instance.GetFloat("GspeedMAX");
             if (gspeedMax != 0)
             {
@@ -404,6 +424,71 @@ namespace MissionPlanner.GCSViews
 
             tabControlactions.Multiline = Settings.Instance.GetBoolean("tabControlactions_Multiline", false);
 
+        }
+
+        private void SigintService_OnError(object sender, string e)
+        {
+            MessageBox.Show(e, "Api Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        private void SigintService_OnSessionData(object sender, List<SessionData> e)
+        {
+            sigintOverlay.Polygons.Clear();
+            sigintOverlay.Markers.Clear();
+            foreach(var sessionData in e) 
+            foreach (var data in sessionData.Data)
+            {
+                foreach (var point in data.Points)
+                {
+                    sigintOverlay.Markers.Add(new GMapMarkerSigint(new PointLatLng(point.Latitude, point.Longitude)));
+                }
+                var mainMarker = new GMarkerGoogle(new PointLatLng(data.CenterLat, data.CenterLong), GMarkerGoogleType.red);
+                sigintOverlay.Markers.Add(mainMarker);
+                DrawEllipse(new GeoArea(data.Points), data);
+            }
+        }
+
+        public void DrawEllipse(GeoArea geoArea, Data data)
+        {
+            // Determine the center point of the ellipse
+            double centerX = geoArea.Center.Longitude;
+            double centerY = geoArea.Center.Latitude;
+
+            // Determine the radii of the ellipse
+            double radiusX = geoArea.RadiusY < 1 ? 20 : geoArea.RadiusY * 1.5;
+            double radiusY = geoArea.RadiusX < 1 ? 20 : geoArea.RadiusX * 1.5; 
+
+            // Create a list of PointLatLng objects for the vertices of the ellipse
+            List<PointLatLng> vertices = new List<PointLatLng>();
+
+            for (int i = 0; i < 360; i++)
+            {
+                double angle = i * Math.PI / 180;
+
+                double lat = centerY + (radiusY / 111111) * Math.Sin(angle);
+                double lng = centerX + (radiusX / (111111 * Math.Cos(centerY * Math.PI / 180))) * Math.Cos(angle);
+
+                vertices.Add(new PointLatLng(lat, lng));
+            }
+
+            // Create a new GMapPolygon object using the vertices
+            var ellipse = new GMapDataPolygon(vertices, data.TargetId.ToString());
+            ellipse.Data = data;
+            ellipse.Fill = new SolidBrush(Color.FromArgb(50, Color.Green));
+            ellipse.Stroke = new Pen(Color.Red);
+            ellipse.IsHitTestVisible = true;
+
+            // Add the polygon to the overlay and redraw the map
+            sigintOverlay.Polygons.Add(ellipse);
+        }
+
+        private void GMapControl1_OnPolygonClick(GMapPolygon item, object mouseEventArgs)
+        {
+            if (item is GMapDataPolygon dataPolygon)
+            {
+                var data = dataPolygon.Data as Data;
+                MessageBox.Show($"Кілкість вимірювань: {data.NumPt} \n Частота проміння, Гц: {data.Freq} \n Магнітуда, дБ: {data.Mag} \n Координати цілі: {data.CenterLat}, {data.CenterLong} \n Тривалість імпульса, мс: {data.Width} \n Ширина проміня, рад:{data.Beam} \n Стандартне відхилення SD_x, м:{data.SdX} \n Стандартне відхилення SD_y, м: {data.SdY}\n Стандартне відхилення SD_avg, м: {data.SdAvg}\n Середня квадратична похибка, м:{data.Rmse}\n Площа невизначеності, м2:{data.Area}", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
 
         public void Activate()
@@ -804,7 +889,7 @@ namespace MissionPlanner.GCSViews
             if (marker != null)
                 marker.Dispose();
             if (aviwriter != null)
-                aviwriter.Dispose();
+                aviwriter.Dispose();            
 
             if (prop != null)
                 prop.Stop();

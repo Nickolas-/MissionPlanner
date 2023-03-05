@@ -6,6 +6,8 @@
     <OutputTypeEx>library</OutputTypeEx>
     <StartupObject />
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <DebugType>portable</DebugType>
     <DebugSymbols>True</DebugSymbols>
     <Description>7zip</Description>

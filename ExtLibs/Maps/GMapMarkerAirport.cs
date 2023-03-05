@@ -10,7 +10,7 @@ using System.Text;
 namespace MissionPlanner.Maps
 {
     [Serializable]
-    public class GMapMarkerAirport : GMapMarker
+    public class GMapMarkerSigint : GMapMarker
     {
         public Pen Pen = new Pen(Brushes.White, 2);
 
@@ -29,7 +29,7 @@ namespace MissionPlanner.Maps
         public GMapMarker InnerMarker;
 
         // m
-        public int wprad = 9000;
+        public int wprad = 5;
 
         public void ResetColor()
         {
@@ -39,7 +39,7 @@ namespace MissionPlanner.Maps
                 Color = Color.White;
         }
 
-        public GMapMarkerAirport(PointLatLng p)
+        public GMapMarkerSigint(PointLatLng p)
             : base(p)
         {
             Pen.DashStyle = DashStyle.Dash;
@@ -57,6 +57,7 @@ namespace MissionPlanner.Maps
             Size = new System.Drawing.Size(50, 50);
             Offset = new System.Drawing.Point(-Size.Width/2, -Size.Height/2);
         }
+
 
         public override void OnRender(IGraphics g)
         {
@@ -97,7 +98,7 @@ namespace MissionPlanner.Maps
             {
                 //g.DrawArc(Pen, new System.Drawing.Rectangle(x, y, widtharc, heightarc), 0, 360);
 
-                g.FillPie(new SolidBrush(Color.FromArgb(25, Color.Red)), x, y, widtharc, heightarc, 0, 360);
+                g.FillPie(new SolidBrush(Color.Red), x, y, widtharc, heightarc, 0, 360);
             }
         }
     }

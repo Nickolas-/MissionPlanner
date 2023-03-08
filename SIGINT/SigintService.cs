@@ -54,7 +54,7 @@ namespace SIGINT
                 var jsonString = await response.Content.ReadAsStringAsync();
                 var session = JsonConvert.DeserializeObject<Session>(jsonString);
 
-                if (session is null && session.SessionId == 0)
+                if (session is null || session.SessionId == 0)
                     return;
 
                 response = await _httpClient.PostAsJsonAsync("get-targets", new

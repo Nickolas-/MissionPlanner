@@ -36,6 +36,7 @@ using SIGINT;
 using SkiaSharp;
 using SevenZip.Compression.LZ;
 using GMap.NET.WindowsForms.ToolTips;
+using MissionPlanner.Grid;
 
 // written by michael oborne
 
@@ -487,7 +488,35 @@ namespace MissionPlanner.GCSViews
             if (item is GMapDataPolygon dataPolygon)
             {
                 var data = dataPolygon.Data as Data;
-                MessageBox.Show($"Кілкість вимірювань: {data.NumPt} \n Частота проміння, Гц: {data.Freq} \n Магнітуда, дБ: {data.Mag} \n Координати цілі: {data.CenterLat}, {data.CenterLong} \n Тривалість імпульса, мс: {data.Width} \n Ширина проміня, рад:{data.Beam} \n Стандартне відхилення SD_x, м:{data.SdX} \n Стандартне відхилення SD_y, м: {data.SdY}\n Стандартне відхилення SD_avg, м: {data.SdAvg}\n Середня квадратична похибка, м:{data.Rmse}\n Площа невизначеності, м2:{data.Area}", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                using (var polygonInfoForm = new PolygonInfo(data))
+                {
+                    polygonInfoForm.StartPosition = FormStartPosition.CenterParent;
+                    MissionPlanner.Utilities.ThemeManager.ApplyThemeTo(polygonInfoForm);
+                    var dialogResult = polygonInfoForm.ShowDialog();
+
+                    if (dialogResult == DialogResult.OK)
+                    {
+                        //...
+                        polygonInfoForm.Close();
+                    }
+                    else if (dialogResult == DialogResult.Cancel)
+                    {
+                        //...
+                        polygonInfoForm.Close();
+                    }
+                    else if (dialogResult == DialogResult.Retry)
+                    {
+                        //...
+                        polygonInfoForm.Close();
+                    }
+                    else
+                    {
+                        //...
+                        polygonInfoForm.Close();
+                    }
+                }
+
+                //MessageBox.Show($"Кілкість вимірювань: {data.NumPt} \n Частота проміння, Гц: {data.Freq} \n Магнітуда, дБ: {data.Mag} \n Координати цілі: {data.CenterLat}, {data.CenterLong} \n Тривалість імпульса, мс: {data.Width} \n Ширина проміня, рад:{data.Beam} \n Стандартне відхилення SD_x, м:{data.SdX} \n Стандартне відхилення SD_y, м: {data.SdY}\n Стандартне відхилення SD_avg, м: {data.SdAvg}\n Середня квадратична похибка, м:{data.Rmse}\n Площа невизначеності, м2:{data.Area}", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 

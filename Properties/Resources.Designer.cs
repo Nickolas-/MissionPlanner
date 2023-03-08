@@ -103,16 +103,6 @@ namespace MissionPlanner.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap _0d92fed790a3a70170e61a86db103f399a595c70 {
-            get {
-                object obj = ResourceManager.GetObject("0d92fed790a3a70170e61a86db103f399a595c70", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap airspeed {
             get {
                 object obj = ResourceManager.GetObject("airspeed", resourceCulture);
@@ -1040,6 +1030,16 @@ namespace MissionPlanner.Properties {
         public static System.Drawing.Bitmap light_tuningconfig_icon {
             get {
                 object obj = ResourceManager.GetObject("light_tuningconfig_icon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap logo_radiobird {
+            get {
+                object obj = ResourceManager.GetObject("logo_radiobird", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

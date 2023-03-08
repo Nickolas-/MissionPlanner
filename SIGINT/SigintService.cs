@@ -70,7 +70,7 @@ namespace SIGINT
                 jsonString = await response.Content.ReadAsStringAsync();
                 var sessionTargets = JsonConvert.DeserializeObject<SessionTargets>(jsonString);
 
-                if (sessionTargets == null)
+                if (sessionTargets == null || sessionTargets.Targets == null)
                     return;
 
                 var toReturn = new List<SessionData>();

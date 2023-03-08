@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.groupBox = new System.Windows.Forms.GroupBox();
+            this.buttonGetFd = new System.Windows.Forms.Button();
+            this.buttonTargetImage = new System.Windows.Forms.Button();
+            this.buttonGetTD = new System.Windows.Forms.Button();
             this.labelAreaName = new System.Windows.Forms.Label();
             this.labelAreaValue = new System.Windows.Forms.Label();
             this.labelRmseName = new System.Windows.Forms.Label();
@@ -54,85 +54,84 @@
             this.labelSdXValue = new System.Windows.Forms.Label();
             this.labelFreqName = new System.Windows.Forms.Label();
             this.labelNumPtName = new System.Windows.Forms.Label();
-            this.groupBox5.SuspendLayout();
+            this.groupBox.SuspendLayout();
             this.SuspendLayout();
             // 
-            // groupBox5
+            // groupBox
             // 
-            this.groupBox5.Controls.Add(this.button3);
-            this.groupBox5.Controls.Add(this.button2);
-            this.groupBox5.Controls.Add(this.button1);
-            this.groupBox5.Controls.Add(this.labelAreaName);
-            this.groupBox5.Controls.Add(this.labelAreaValue);
-            this.groupBox5.Controls.Add(this.labelRmseName);
-            this.groupBox5.Controls.Add(this.labelRmseValue);
-            this.groupBox5.Controls.Add(this.labelSdAvgName);
-            this.groupBox5.Controls.Add(this.labelSdYValue);
-            this.groupBox5.Controls.Add(this.labelSdYName);
-            this.groupBox5.Controls.Add(this.labelSdAvgValue);
-            this.groupBox5.Controls.Add(this.labelBeamValue);
-            this.groupBox5.Controls.Add(this.labelWidthValue);
-            this.groupBox5.Controls.Add(this.labelSdXName);
-            this.groupBox5.Controls.Add(this.labelLatValue);
-            this.groupBox5.Controls.Add(this.labelMagValue);
-            this.groupBox5.Controls.Add(this.labelBeamName);
-            this.groupBox5.Controls.Add(this.labelWidthName);
-            this.groupBox5.Controls.Add(this.labelFreqValue);
-            this.groupBox5.Controls.Add(this.labelLatName);
-            this.groupBox5.Controls.Add(this.labelNumPtValue);
-            this.groupBox5.Controls.Add(this.labelMagName);
-            this.groupBox5.Controls.Add(this.labelSdXValue);
-            this.groupBox5.Controls.Add(this.labelFreqName);
-            this.groupBox5.Controls.Add(this.labelNumPtName);
-            this.groupBox5.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.groupBox5.Location = new System.Drawing.Point(0, 12);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(559, 438);
-            this.groupBox5.TabIndex = 21;
-            this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Info";
+            this.groupBox.Controls.Add(this.buttonGetFd);
+            this.groupBox.Controls.Add(this.buttonTargetImage);
+            this.groupBox.Controls.Add(this.buttonGetTD);
+            this.groupBox.Controls.Add(this.labelAreaName);
+            this.groupBox.Controls.Add(this.labelAreaValue);
+            this.groupBox.Controls.Add(this.labelRmseName);
+            this.groupBox.Controls.Add(this.labelRmseValue);
+            this.groupBox.Controls.Add(this.labelSdAvgName);
+            this.groupBox.Controls.Add(this.labelSdYValue);
+            this.groupBox.Controls.Add(this.labelSdYName);
+            this.groupBox.Controls.Add(this.labelSdAvgValue);
+            this.groupBox.Controls.Add(this.labelBeamValue);
+            this.groupBox.Controls.Add(this.labelWidthValue);
+            this.groupBox.Controls.Add(this.labelSdXName);
+            this.groupBox.Controls.Add(this.labelLatValue);
+            this.groupBox.Controls.Add(this.labelMagValue);
+            this.groupBox.Controls.Add(this.labelBeamName);
+            this.groupBox.Controls.Add(this.labelWidthName);
+            this.groupBox.Controls.Add(this.labelFreqValue);
+            this.groupBox.Controls.Add(this.labelLatName);
+            this.groupBox.Controls.Add(this.labelNumPtValue);
+            this.groupBox.Controls.Add(this.labelMagName);
+            this.groupBox.Controls.Add(this.labelSdXValue);
+            this.groupBox.Controls.Add(this.labelFreqName);
+            this.groupBox.Controls.Add(this.labelNumPtName);
+            this.groupBox.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.groupBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.groupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox.Location = new System.Drawing.Point(0, 12);
+            this.groupBox.Name = "groupBox";
+            this.groupBox.Size = new System.Drawing.Size(633, 438);
+            this.groupBox.TabIndex = 21;
+            this.groupBox.TabStop = false;
+            this.groupBox.Text = "Info";
             // 
-            // button3
+            // buttonGetFd
             // 
-            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.buttonGetFd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.button3.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button3.Location = new System.Drawing.Point(228, 358);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(110, 55);
-            this.button3.TabIndex = 26;
-            this.button3.Text = "button2";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.buttonGetFd.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonGetFd.Location = new System.Drawing.Point(230, 345);
+            this.buttonGetFd.Name = "buttonGetFd";
+            this.buttonGetFd.Size = new System.Drawing.Size(170, 70);
+            this.buttonGetFd.TabIndex = 26;
+            this.buttonGetFd.Text = "Freq.-domain \r\nsignature";
+            this.buttonGetFd.UseVisualStyleBackColor = true;
+            this.buttonGetFd.Click += new System.EventHandler(this.OnGetFDClicked);
             // 
-            // button2
+            // buttonTargetImage
             // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.buttonTargetImage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.button2.DialogResult = System.Windows.Forms.DialogResult.Retry;
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button2.Location = new System.Drawing.Point(426, 358);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(110, 55);
-            this.button2.TabIndex = 25;
-            this.button2.Text = "button3";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.buttonTargetImage.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonTargetImage.Location = new System.Drawing.Point(440, 345);
+            this.buttonTargetImage.Name = "buttonTargetImage";
+            this.buttonTargetImage.Size = new System.Drawing.Size(170, 70);
+            this.buttonTargetImage.TabIndex = 25;
+            this.buttonTargetImage.Text = "Target \r\nimage";
+            this.buttonTargetImage.UseVisualStyleBackColor = true;
+            this.buttonTargetImage.Click += new System.EventHandler(this.OnGetTargetImageClicked);
             // 
-            // button1
+            // buttonGetTD
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.buttonGetTD.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.button1.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(23, 358);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(110, 55);
-            this.button1.TabIndex = 24;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.buttonGetTD.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonGetTD.Location = new System.Drawing.Point(23, 345);
+            this.buttonGetTD.Name = "buttonGetTD";
+            this.buttonGetTD.Size = new System.Drawing.Size(170, 70);
+            this.buttonGetTD.TabIndex = 24;
+            this.buttonGetTD.Text = "Time-domain \r\nsignature";
+            this.buttonGetTD.UseVisualStyleBackColor = true;
+            this.buttonGetTD.Click += new System.EventHandler(this.OnGetTDClicked);
             // 
             // labelAreaName
             // 
@@ -153,7 +152,7 @@
             this.labelAreaValue.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.labelAreaValue.Location = new System.Drawing.Point(294, 282);
             this.labelAreaValue.Name = "labelAreaValue";
-            this.labelAreaValue.Size = new System.Drawing.Size(242, 25);
+            this.labelAreaValue.Size = new System.Drawing.Size(316, 25);
             this.labelAreaValue.TabIndex = 22;
             this.labelAreaValue.Text = "0.00";
             this.labelAreaValue.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -177,7 +176,7 @@
             this.labelRmseValue.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.labelRmseValue.Location = new System.Drawing.Point(351, 257);
             this.labelRmseValue.Name = "labelRmseValue";
-            this.labelRmseValue.Size = new System.Drawing.Size(185, 25);
+            this.labelRmseValue.Size = new System.Drawing.Size(259, 25);
             this.labelRmseValue.TabIndex = 20;
             this.labelRmseValue.Text = "0.00";
             this.labelRmseValue.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -201,7 +200,7 @@
             this.labelSdYValue.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.labelSdYValue.Location = new System.Drawing.Point(338, 207);
             this.labelSdYValue.Name = "labelSdYValue";
-            this.labelSdYValue.Size = new System.Drawing.Size(198, 25);
+            this.labelSdYValue.Size = new System.Drawing.Size(272, 25);
             this.labelSdYValue.TabIndex = 18;
             this.labelSdYValue.Text = "0.00";
             this.labelSdYValue.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -225,7 +224,7 @@
             this.labelSdAvgValue.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.labelSdAvgValue.Location = new System.Drawing.Point(356, 232);
             this.labelSdAvgValue.Name = "labelSdAvgValue";
-            this.labelSdAvgValue.Size = new System.Drawing.Size(180, 25);
+            this.labelSdAvgValue.Size = new System.Drawing.Size(254, 25);
             this.labelSdAvgValue.TabIndex = 16;
             this.labelSdAvgValue.Text = "0.00";
             this.labelSdAvgValue.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -238,7 +237,7 @@
             this.labelBeamValue.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.labelBeamValue.Location = new System.Drawing.Point(307, 155);
             this.labelBeamValue.Name = "labelBeamValue";
-            this.labelBeamValue.Size = new System.Drawing.Size(229, 25);
+            this.labelBeamValue.Size = new System.Drawing.Size(303, 25);
             this.labelBeamValue.TabIndex = 15;
             this.labelBeamValue.Text = "0.00";
             this.labelBeamValue.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -251,7 +250,7 @@
             this.labelWidthValue.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.labelWidthValue.Location = new System.Drawing.Point(312, 130);
             this.labelWidthValue.Name = "labelWidthValue";
-            this.labelWidthValue.Size = new System.Drawing.Size(224, 25);
+            this.labelWidthValue.Size = new System.Drawing.Size(298, 25);
             this.labelWidthValue.TabIndex = 13;
             this.labelWidthValue.Text = "0.00";
             this.labelWidthValue.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -275,10 +274,11 @@
             this.labelLatValue.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.labelLatValue.Location = new System.Drawing.Point(269, 105);
             this.labelLatValue.Name = "labelLatValue";
-            this.labelLatValue.Size = new System.Drawing.Size(267, 25);
+            this.labelLatValue.Size = new System.Drawing.Size(341, 25);
             this.labelLatValue.TabIndex = 11;
             this.labelLatValue.Text = "0.00 / 0.00";
             this.labelLatValue.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.labelLatValue.Click += new System.EventHandler(this.labelLatValue_Click);
             // 
             // labelMagValue
             // 
@@ -288,7 +288,7 @@
             this.labelMagValue.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.labelMagValue.Location = new System.Drawing.Point(312, 80);
             this.labelMagValue.Name = "labelMagValue";
-            this.labelMagValue.Size = new System.Drawing.Size(224, 25);
+            this.labelMagValue.Size = new System.Drawing.Size(298, 25);
             this.labelMagValue.TabIndex = 10;
             this.labelMagValue.Text = "0.00";
             this.labelMagValue.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -323,7 +323,7 @@
             this.labelFreqValue.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.labelFreqValue.Location = new System.Drawing.Point(307, 55);
             this.labelFreqValue.Name = "labelFreqValue";
-            this.labelFreqValue.Size = new System.Drawing.Size(229, 25);
+            this.labelFreqValue.Size = new System.Drawing.Size(303, 25);
             this.labelFreqValue.TabIndex = 7;
             this.labelFreqValue.Text = "0.00";
             this.labelFreqValue.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -347,7 +347,7 @@
             this.labelNumPtValue.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.labelNumPtValue.Location = new System.Drawing.Point(302, 30);
             this.labelNumPtValue.Name = "labelNumPtValue";
-            this.labelNumPtValue.Size = new System.Drawing.Size(234, 25);
+            this.labelNumPtValue.Size = new System.Drawing.Size(308, 25);
             this.labelNumPtValue.TabIndex = 5;
             this.labelNumPtValue.Text = "0.00";
             this.labelNumPtValue.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -371,7 +371,7 @@
             this.labelSdXValue.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.labelSdXValue.Location = new System.Drawing.Point(339, 180);
             this.labelSdXValue.Name = "labelSdXValue";
-            this.labelSdXValue.Size = new System.Drawing.Size(197, 25);
+            this.labelSdXValue.Size = new System.Drawing.Size(271, 25);
             this.labelSdXValue.TabIndex = 2;
             this.labelSdXValue.Text = "0.00";
             this.labelSdXValue.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -402,19 +402,19 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(559, 450);
-            this.Controls.Add(this.groupBox5);
+            this.ClientSize = new System.Drawing.Size(633, 450);
+            this.Controls.Add(this.groupBox);
             this.Name = "PolygonInfo";
             this.Text = "PolygonInfo";
-            this.groupBox5.ResumeLayout(false);
-            this.groupBox5.PerformLayout();
+            this.groupBox.ResumeLayout(false);
+            this.groupBox.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.GroupBox groupBox;
         private System.Windows.Forms.Label labelBeamValue;
         private System.Windows.Forms.Label labelWidthValue;
         private System.Windows.Forms.Label labelSdXName;
@@ -437,8 +437,8 @@
         private System.Windows.Forms.Label labelSdYValue;
         private System.Windows.Forms.Label labelSdYName;
         private System.Windows.Forms.Label labelSdAvgValue;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button buttonGetFd;
+        private System.Windows.Forms.Button buttonTargetImage;
+        private System.Windows.Forms.Button buttonGetTD;
     }
 }

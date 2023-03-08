@@ -251,7 +251,7 @@ namespace MissionPlanner.GCSViews
             if (SigintService == null)
             {
                 SigintService = new SigintService(MainV2.comPort);
-                SigintService.Start();
+                SigintService.StartFetchingData();
                 SigintService.OnError += SigintService_OnError;
                 SigintService.OnSessionData += SigintService_OnSessionData;
             }
@@ -483,40 +483,33 @@ namespace MissionPlanner.GCSViews
             sigintOverlay.Polygons.Add(ellipse);
         }
 
+        private bool _infoWindowVisible;
+
         private void GMapControl1_OnPolygonClick(GMapPolygon item, object mouseEventArgs)
         {
-            if (item is GMapDataPolygon dataPolygon)
+            if (_infoWindowVisible)
+                return;
+            try
             {
+                _infoWindowVisible = true;
+
+                if (!(item is GMapDataPolygon dataPolygon))
+                    return;
+
                 var data = dataPolygon.Data as Data;
-                using (var polygonInfoForm = new PolygonInfo(data))
+                using (var polygonInfoForm = new PolygonInfo(data, SigintService))
                 {
                     polygonInfoForm.StartPosition = FormStartPosition.CenterParent;
                     MissionPlanner.Utilities.ThemeManager.ApplyThemeTo(polygonInfoForm);
                     var dialogResult = polygonInfoForm.ShowDialog();
-
-                    if (dialogResult == DialogResult.OK)
-                    {
-                        //...
-                        polygonInfoForm.Close();
-                    }
-                    else if (dialogResult == DialogResult.Cancel)
-                    {
-                        //...
-                        polygonInfoForm.Close();
-                    }
-                    else if (dialogResult == DialogResult.Retry)
-                    {
-                        //...
-                        polygonInfoForm.Close();
-                    }
-                    else
-                    {
-                        //...
-                        polygonInfoForm.Close();
-                    }
+                    polygonInfoForm.Close();
                 }
 
                 //MessageBox.Show($"Кілкість вимірювань: {data.NumPt} \n Частота проміння, Гц: {data.Freq} \n Магнітуда, дБ: {data.Mag} \n Координати цілі: {data.CenterLat}, {data.CenterLong} \n Тривалість імпульса, мс: {data.Width} \n Ширина проміня, рад:{data.Beam} \n Стандартне відхилення SD_x, м:{data.SdX} \n Стандартне відхилення SD_y, м: {data.SdY}\n Стандартне відхилення SD_avg, м: {data.SdAvg}\n Середня квадратична похибка, м:{data.Rmse}\n Площа невизначеності, м2:{data.Area}", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            finally
+            {
+                _infoWindowVisible = false;
             }
         }
 

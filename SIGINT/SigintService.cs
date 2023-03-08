@@ -1,7 +1,9 @@
-﻿using MissionPlanner;
+﻿using ExifLibrary;
+using MissionPlanner;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Cache;
 using System.Net.Http;
@@ -9,12 +11,14 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using static MAVLink;
 
 namespace SIGINT
 {
     public class SigintService
     {
+        private const int ProtocolVersion = 1;
         private SimpleTimer _timer;
         private readonly HttpClient _httpClient = new HttpClient() { BaseAddress = new Uri("http://sigint.bavovna.ai/") };
         private readonly MAVLinkInterface _mAV;
@@ -27,48 +31,65 @@ namespace SIGINT
             this._mAV = mAV;
         }
 
-        public void Start()
+        public int CurrentUnixTime => (int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
+
+        public long? SessionId { get; private set; }
+
+        public Task<byte[]> GetTimeDomainSignatureImageAsync(long targetId)
         {
-            _timer = new SimpleTimer(CheckData, TimeSpan.FromSeconds(5));
+            return InnerGetImageAsync("get-pattern-td", targetId);
         }
 
-        private async void CheckData()
+        public Task<byte[]> GetFrequencyDomainSignatureImageAsync(long targetId)
+        {
+            return InnerGetImageAsync("get-pattern-fd", targetId);
+        }
+
+        public Task<byte[]> GetTargetImageAsync(long targetId)
+        {
+            return InnerGetImageAsync("get-image", targetId);
+        }
+
+        private async Task<byte[]> InnerGetImageAsync(string endpoint, long targetId)
+        {
+            if (SessionId == null)
+                await GetActiveSessionAsync();
+
+            if (SessionId == null || SessionId == 0 || targetId == 0)
+                return null;
+
+            var response = await _httpClient.PostAsJsonAsync(endpoint, new
+            {
+                session_Id = SessionId,
+                target_id = targetId,
+                timestamp = CurrentUnixTime,
+                protocol_v = ProtocolVersion
+            });
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK || response.Content == null)
+                return null;
+
+            var imageData = await response.Content.ReadAsByteArrayAsync();
+            return imageData;
+        }
+
+        public void StartFetchingData()
+        {
+            _timer = new SimpleTimer(CheckPeriodicData, TimeSpan.FromSeconds(5));
+        }
+
+        private async void CheckPeriodicData()
         {
             try
             {
-                var uavId = GetUavId();
+                SessionId = null;
 
-                if (string.IsNullOrEmpty(uavId))
-                    return;
-
-                var response = await _httpClient.PostAsJsonAsync("get-active-session", new
-                {
-                    uav_id = uavId,
-                    timestamp = (int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds,
-                    protocol_v = 1
-                });
-
-                if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                    return;
-
-                var jsonString = await response.Content.ReadAsStringAsync();
-                var session = JsonConvert.DeserializeObject<Session>(jsonString);
+                var session = await GetActiveSessionAsync();
 
                 if (session is null || session.SessionId == 0)
                     return;
 
-                response = await _httpClient.PostAsJsonAsync("get-targets", new
-                {
-                    session_id = session.SessionId,
-                    timestamp = (int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds,
-                    protocol_v = 1
-                });
-
-                if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                    return;
-
-                jsonString = await response.Content.ReadAsStringAsync();
-                var sessionTargets = JsonConvert.DeserializeObject<SessionTargets>(jsonString);
+                var sessionTargets = await GetSessionTargetsAsync(session);
 
                 if (sessionTargets == null || sessionTargets.Targets == null)
                     return;
@@ -76,20 +97,8 @@ namespace SIGINT
                 var toReturn = new List<SessionData>();
                 foreach (var item in sessionTargets.Targets)
                 {
-                    response = await _httpClient.PostAsJsonAsync("get-data", new
-                    {
-                        session_id = session.SessionId,
-                        target_id = item.TargetId,
-                        timestamp = (int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds,
-                        protocol_v = 1
-                    });
-
-                    if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                        return;
-
-                    jsonString = await response.Content.ReadAsStringAsync();
-                    var data = JsonConvert.DeserializeObject<SessionData>(jsonString);
-                    toReturn.Add(data);                    
+                    var data = await GetSessionDataAsync(session, item);
+                    toReturn.Add(data);
                 }
 
                 if (!toReturn.Any())
@@ -102,14 +111,72 @@ namespace SIGINT
                 OnError?.Invoke(this, ex.Message);
                 _timer.Dispose();
             }
-            
         }
-
 
         private string GetUavId()
         {
             var serialString = _mAV.MAVlist[_mAV.sysidcurrent, _mAV.compidcurrent].SerialString;
             return serialString;
+        }
+
+        private async Task<Session> GetActiveSessionAsync()
+        {
+            var uavId = GetUavId();
+
+            if (string.IsNullOrEmpty(uavId))
+                return null;
+
+            var response = await _httpClient.PostAsJsonAsync("get-active-session", new
+            {
+                uav_id = uavId,
+                timestamp = CurrentUnixTime,
+                protocol_v = ProtocolVersion
+            });
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                return null;
+
+            var jsonString = await response.Content.ReadAsStringAsync();
+            var session = JsonConvert.DeserializeObject<Session>(jsonString);
+
+            if (session == null || session.SessionId == 0)
+                return null;
+
+            SessionId = session.SessionId;
+            return session;
+        }
+
+        private async Task<SessionTargets> GetSessionTargetsAsync(Session session)
+        {
+            var response = await _httpClient.PostAsJsonAsync("get-targets", new
+            {
+                session_id = session.SessionId,
+                timestamp = CurrentUnixTime,
+                protocol_v = ProtocolVersion
+            });
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                return null;
+
+            var jsonString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<SessionTargets>(jsonString);
+        }
+
+        private async Task<SessionData> GetSessionDataAsync(Session session, Target item)
+        {
+            var response = await _httpClient.PostAsJsonAsync("get-data", new
+            {
+                session_id = session.SessionId,
+                target_id = item.TargetId,
+                timestamp = CurrentUnixTime,
+                protocol_v = ProtocolVersion
+            });
+
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                return null;
+
+            var jsonString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<SessionData>(jsonString);
         }
 
     }
@@ -207,11 +274,11 @@ namespace SIGINT
         public GeoArea(List<SigintPoint> points)
         {
             Points = points;
-            CalculateCenterAndRadious();
+            CalculateCenterAndRadius();
         }
 
 
-        private void CalculateCenterAndRadious()
+        private void CalculateCenterAndRadius()
         {
             // Find the latitude and longitude boundaries of the area
             double minLatitude = double.MaxValue;

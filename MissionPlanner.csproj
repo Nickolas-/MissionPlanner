@@ -307,6 +307,9 @@
     <EmbeddedResource Include="GCSViews\InitialSetup.uk.resx">
       <DependentUpon>InitialSetup.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="GCSViews\PolygonInfo.resx">
+      <DependentUpon>PolygonInfo.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GCSViews\SITL.uk.resx">
       <DependentUpon>SITL.cs</DependentUpon>
     </EmbeddedResource>
@@ -897,6 +900,12 @@
     <Compile Include="GCSViews\ConfigurationView\DeviceInfo.cs" />
     <Compile Include="GCSViews\ConfigurationView\DroneCANModel.cs" />
     <Compile Include="GCSViews\ConfigurationView\uitype.cs" />
+    <Compile Include="GCSViews\PolygonInfo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GCSViews\PolygonInfo.Designer.cs">
+      <DependentUpon>PolygonInfo.cs</DependentUpon>
+    </Compile>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Joystick\JoystickAxis.cs">
       <SubType>UserControl</SubType>
@@ -4906,6 +4915,7 @@
     <Content Include="quaternion.py">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\logo_radiobird1.png" />
     <Content Include="rotmat.py">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

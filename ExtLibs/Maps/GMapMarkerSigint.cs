@@ -10,7 +10,7 @@ using System.Text;
 namespace MissionPlanner.Maps
 {
     [Serializable]
-    public class GMapMarkerAirport : GMapMarker
+    public class GMapMarkerSigint : GMapMarker
     {
         public Pen Pen = new Pen(Brushes.White, 2);
 
@@ -29,7 +29,7 @@ namespace MissionPlanner.Maps
         public GMapMarker InnerMarker;
 
         // m
-        public int wprad = 3000;
+        public int wprad = 5;
 
         public void ResetColor()
         {
@@ -39,7 +39,7 @@ namespace MissionPlanner.Maps
                 Color = Color.White;
         }
 
-        public GMapMarkerAirport(PointLatLng p)
+        public GMapMarkerSigint(PointLatLng p)
             : base(p)
         {
             Pen.DashStyle = DashStyle.Dash;
@@ -70,7 +70,7 @@ namespace MissionPlanner.Maps
             if (!initcolor.HasValue)
                 Color = Color.White;
 
-            //wprad = 300;
+            SetNormalizedWidth(Overlay.Control.Zoom);
 
             // undo autochange in mouse over
             //if (Pen.Color == Color.Blue)
@@ -98,7 +98,29 @@ namespace MissionPlanner.Maps
             {
                 //g.DrawArc(Pen, new System.Drawing.Rectangle(x, y, widtharc, heightarc), 0, 360);
 
-                g.FillPie(new SolidBrush(Color.FromArgb(25, Color.Blue)), x, y, widtharc, heightarc, 0, 360);
+                g.FillPie(new SolidBrush(Color.Red), x, y, widtharc, heightarc, 0, 360);
+            }
+        }
+
+        private void SetNormalizedWidth(double zoomLevel)
+        {
+            switch (zoomLevel)
+            {
+                case double zoom when zoom <= 15:
+                    wprad = 5;
+                    break;
+                case double zoom when zoom > 15 && zoom <= 16.0:
+                    wprad = 4;
+                    break;
+                case double zoom when zoom > 16.0 && zoomLevel <= 17.0:
+                    wprad = 3;
+                    break;
+                case double zoom when zoom > 17.0 && zoomLevel <= 18.5:
+                    wprad = 2;
+                    break;
+                default:
+                    wprad = 1;
+                    break;
             }
         }
     }

@@ -34,8 +34,8 @@ namespace MissionPlanner.GCSViews
             labelFreqValue.Text = data.Freq.ToString();
             labelMagValue.Text = data.Mag.ToString();
             labelLatValue.Text = $"{data.CenterLat}, {data.CenterLong}";
-            labelWidthValue.Text = data.Width.ToString(); //Тривалість імпульса, мс: {data.Width} //Beam???
-            labelBeamValue.Text = data.Beam.ToString(); // Ширина проміня, рад:{data.Beam} //Width???
+            labelWidthValue.Text = data.Width.ToString(); 
+            labelBeamValue.Text = data.Beam.ToString(); 
             labelSdXValue.Text = data.SdX.ToString();
             labelSdYValue.Text = data.SdY.ToString();
             labelSdAvgValue.Text = data.SdAvg.ToString();
@@ -99,12 +99,12 @@ namespace MissionPlanner.GCSViews
             }
         }
 
-        private void ShowImageForm(byte[] imageData)
+        private void ShowImageForm(Stream imageData)
         {
             if (imageData == null)
                 return;
 
-            var image = BytesToImage(imageData);
+            var image = Image.FromStream(imageData);
 
             Form form = new Form();
             form.AutoSize = true;
@@ -132,31 +132,5 @@ namespace MissionPlanner.GCSViews
             stream.Dispose();
             return image;
         }
-
-        //private void ShowTestForm(byte[] imageData)
-        //{
-        //    Form form = new Form();
-        //    form.AutoSize = true;
-        //    form.StartPosition = FormStartPosition.CenterParent;
-        //    MissionPlanner.Utilities.ThemeManager.ApplyThemeTo(form);
-        //    PictureBox pictureBox = new PictureBox();
-        //    pictureBox.Dock = DockStyle.Fill;
-        //    pictureBox.Anchor = AnchorStyles.None;
-        //    pictureBox.SizeMode = PictureBoxSizeMode.AutoSize;
-        //    form.Controls.Add(pictureBox);
-        //    pictureBox.Image = TestImage();
-        //    pictureBox.Location = new Point(
-        //        (pictureBox.Parent.ClientSize.Width / 2) - (pictureBox.Width / 2),
-        //        (pictureBox.Parent.ClientSize.Height / 2) - (pictureBox.Height / 2));
-        //    pictureBox.Refresh();
-        //    form.Size = pictureBox.Size;
-        //    form.ShowDialog();
-        //}
-
-        //private Image TestImage()
-        //{
-        //    var running_directory = Utilities.Settings.GetRunningDirectory();
-        //    return global::MissionPlanner.Properties.Resources.logo_radiobird;
-        //}
     }
 }

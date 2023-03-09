@@ -35,22 +35,22 @@ namespace SIGINT
 
         public long? SessionId { get; private set; }
 
-        public Task<byte[]> GetTimeDomainSignatureImageAsync(long targetId)
+        public Task<Stream> GetTimeDomainSignatureImageAsync(long targetId)
         {
             return InnerGetImageAsync("get-pattern-td", targetId);
         }
 
-        public Task<byte[]> GetFrequencyDomainSignatureImageAsync(long targetId)
+        public Task<Stream> GetFrequencyDomainSignatureImageAsync(long targetId)
         {
             return InnerGetImageAsync("get-pattern-fd", targetId);
         }
 
-        public Task<byte[]> GetTargetImageAsync(long targetId)
+        public Task<Stream> GetTargetImageAsync(long targetId)
         {
             return InnerGetImageAsync("get-image", targetId);
         }
 
-        private async Task<byte[]> InnerGetImageAsync(string endpoint, long targetId)
+        private async Task<Stream> InnerGetImageAsync(string endpoint, long targetId)
         {
             if (SessionId == null)
                 await GetActiveSessionAsync();
@@ -69,7 +69,7 @@ namespace SIGINT
             if (response.StatusCode != System.Net.HttpStatusCode.OK || response.Content == null)
                 return null;
 
-            var imageData = await response.Content.ReadAsByteArrayAsync();
+            var imageData = await response.Content.ReadAsStreamAsync();
             return imageData;
         }
 

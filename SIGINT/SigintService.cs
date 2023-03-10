@@ -60,13 +60,15 @@ namespace SIGINT
 
             var response = await _httpClient.PostAsJsonAsync(endpoint, new
             {
-                session_Id = SessionId,
+                session_id = SessionId,
                 target_id = targetId,
                 timestamp = CurrentUnixTime,
                 protocol_v = ProtocolVersion
             });
 
-            if (response.StatusCode != System.Net.HttpStatusCode.OK || response.Content == null)
+            if (response.StatusCode != System.Net.HttpStatusCode.OK || 
+                response.Content == null ||
+                response.Content.Headers.ContentLength < 10)
                 return null;
 
             var imageData = await response.Content.ReadAsStreamAsync();

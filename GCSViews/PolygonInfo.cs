@@ -48,10 +48,22 @@ namespace MissionPlanner.GCSViews
             if (!_sigintService.TryGetTarget(out var service))
                 return;
 
-            var imageData = await service.GetTargetImageAsync(TargetId);
+            Stream imageData = null;
+
+            try
+            {
+                imageData = await service.GetTargetImageAsync(TargetId);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+            }
 
             if (imageData == null)
+            {
+                MessageBox.Show("Не вдалось завантажити зображення або дані відсутні");
                 return;
+            }
 
             ShowImageForm(imageData);
         }
@@ -61,10 +73,22 @@ namespace MissionPlanner.GCSViews
             if (!_sigintService.TryGetTarget(out var service))
                 return;
 
-            var imageData = await service.GetFrequencyDomainSignatureImageAsync(TargetId);
+            Stream imageData = null;
+
+            try
+            {
+                imageData = await service.GetFrequencyDomainSignatureImageAsync(TargetId);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+            }
 
             if (imageData == null)
+            {
+                MessageBox.Show("Не вдалось завантажити зображення або дані відсутні");
                 return;
+            }
 
             ShowImageForm(imageData);
         }
@@ -74,10 +98,22 @@ namespace MissionPlanner.GCSViews
             if (!_sigintService.TryGetTarget(out var service))
                 return;
 
-            var imageData = await service.GetTimeDomainSignatureImageAsync(TargetId);
+            Stream imageData = null;
+
+            try
+            {
+                imageData = await service.GetTimeDomainSignatureImageAsync(TargetId);
+            }
+            catch(Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+            }
 
             if (imageData == null)
+            {
+                MessageBox.Show("Не вдалось завантажити зображення або дані відсутні");
                 return;
+            }
 
             ShowImageForm(imageData);
         }

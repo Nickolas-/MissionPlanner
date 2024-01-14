@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -250,6 +251,7 @@ namespace MissionPlanner.GCSViews
 
             if (SigintService == null)
             {
+                LoadBitmaps();
                 SigintService = new SigintService(MainV2.comPort);
                 SigintService.StartFetchingData();
                 SigintService.OnError += SigintService_OnError;
@@ -373,6 +375,7 @@ namespace MissionPlanner.GCSViews
             gMapControl1.OnMarkerEnter += gMapControl1_OnMarkerEnter;
             gMapControl1.OnMarkerLeave += gMapControl1_OnMarkerLeave;
             gMapControl1.OnPolygonClick += GMapControl1_OnPolygonClick;
+            gMapControl1.OnMarkerClick += GMapControl1OnOnMarkerClick;
 
             gMapControl1.RoutesEnabled = true;
             gMapControl1.PolygonsEnabled = true;
@@ -427,6 +430,39 @@ namespace MissionPlanner.GCSViews
 
         }
 
+        private static Bitmap A;
+        private static Bitmap B;
+        private static Bitmap Unkown;
+        private static void LoadBitmaps()
+        {
+            using (Bitmap pngImage = new Bitmap("a.png"))
+            {
+                A = new Bitmap(pngImage.Width, pngImage.Height, PixelFormat.Format32bppArgb);
+                using (Graphics graphics = Graphics.FromImage(A))
+                {
+                    graphics.DrawImage(pngImage, new Rectangle(0, 0, A.Width, A.Height));
+                }
+            }
+            
+            using (Bitmap pngImage = new Bitmap("b.png"))
+            {
+                B = new Bitmap(pngImage.Width, pngImage.Height, PixelFormat.Format32bppArgb);
+                using (Graphics graphics = Graphics.FromImage(B))
+                {
+                    graphics.DrawImage(pngImage, new Rectangle(0, 0, B.Width, B.Height));
+                }
+            }
+            
+            using (Bitmap pngImage = new Bitmap("unkown.png"))
+            {
+                Unkown = new Bitmap(pngImage.Width, pngImage.Height, PixelFormat.Format32bppArgb);
+                using (Graphics graphics = Graphics.FromImage(Unkown))
+                {
+                    graphics.DrawImage(pngImage, new Rectangle(0, 0, Unkown.Width, Unkown.Height));
+                }
+            }
+        }
+
         private void SigintService_OnError(object sender, string e)
         {
             MessageBox.Show(e, "Api Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -443,7 +479,14 @@ namespace MissionPlanner.GCSViews
                 {
                     sigintOverlay.Markers.Add(new GMapMarkerSigint(new PointLatLng(point.Latitude, point.Longitude)));
                 }
-                var mainMarker = new GMarkerGoogle(new PointLatLng(data.CenterLat, data.CenterLong), GMarkerGoogleType.red);
+
+                Bitmap bitmap = Unkown;
+                var mhz = data.Freq / 1000000;
+                if(mhz >= 500 && mhz <= 1000) bitmap = A;
+                if(mhz >= 2400 && mhz <= 6000) bitmap = B;
+                
+                var mainMarker = new GMapMarkerDataSigint(new PointLatLng(data.CenterLat, data.CenterLong), bitmap);
+                mainMarker.Data = data;
                 sigintOverlay.Markers.Add(mainMarker);
                 DrawEllipse(new GeoArea(data.Points), data);
             }
@@ -484,6 +527,36 @@ namespace MissionPlanner.GCSViews
         }
 
         private bool _infoWindowVisible;
+        
+        private void GMapControl1OnOnMarkerClick(GMapMarker item, object mouseeventargs)
+        {
+            if (_infoWindowVisible)
+                return;
+            
+            try
+            {
+                _infoWindowVisible = true;
+
+                if (!(item is GMapMarkerDataSigint marker))
+                    return;
+
+                var data = marker.Data as Data;
+                using (var polygonInfoForm = new PolygonInfo(data, SigintService))
+                {
+                    polygonInfoForm.StartPosition = FormStartPosition.CenterParent;
+                    MissionPlanner.Utilities.ThemeManager.ApplyThemeTo(polygonInfoForm);
+                    var dialogResult = polygonInfoForm.ShowDialog();
+                    polygonInfoForm.Close();
+                }
+
+                //MessageBox.Show($"Кілкість вимірювань: {data.NumPt} \n Частота проміння, Гц: {data.Freq} \n Магнітуда, дБ: {data.Mag} \n Координати цілі: {data.CenterLat}, {data.CenterLong} \n Тривалість імпульса, мс: {data.Width} \n Ширина проміня, рад:{data.Beam} \n Стандартне відхилення SD_x, м:{data.SdX} \n Стандартне відхилення SD_y, м: {data.SdY}\n Стандартне відхилення SD_avg, м: {data.SdAvg}\n Середня квадратична похибка, м:{data.Rmse}\n Площа невизначеності, м2:{data.Area}", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            finally
+            {
+                _infoWindowVisible = false;
+            }
+        }
+
 
         private void GMapControl1_OnPolygonClick(GMapPolygon item, object mouseEventArgs)
         {

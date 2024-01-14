@@ -661,6 +661,7 @@
     <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies">
       <Version>2.80.3</Version>
     </PackageReference>
+    <PackageReference Include="SkiaSharp.Svg" Version="1.60.0" />
     <PackageReference Include="SkiaSharp.Views" Version="2.80.2" />
     <PackageReference Include="SSH.NET" version="2020.0.2" targetFramework="net40" />
     <PackageReference Include="System.CodeDom">
@@ -714,6 +715,7 @@
     <Compile Include="Controls\DigitalSkyUI.Designer.cs">
       <DependentUpon>DigitalSkyUI.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\GMapMarkerDataSigint.cs" />
     <Compile Include="Controls\MavCommandSelection.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1033,6 +1035,12 @@
     </Compile>
     <Compile Include="test\FirmwareSelection.xaml.cs">
       <DependentUpon>FirmwareSelection.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Utilities\CustomModal.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Utilities\CustomModal.Designer.cs">
+      <DependentUpon>CustomModal.cs</DependentUpon>
     </Compile>
     <Compile Include="Utilities\ImageMatch.cs" />
     <Compile Include="Utilities\NativeLibrary.cs" />
@@ -4892,6 +4900,9 @@
     <EmbeddedResource Include="Controls\fftui.resx">
       <DependentUpon>fftui.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Utilities\CustomModal.resx">
+      <DependentUpon>CustomModal.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Warnings\WarningControl.resx">
       <DependentUpon>WarningControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -4900,10 +4911,19 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="a.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="acsimplepids.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="aircraft.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="b.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="sigint.config.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Drivers\CubeOrangePlus.inf">
@@ -4913,6 +4933,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="quaternion.py">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="unkown.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="Resources\logo_radiobird1.png" />

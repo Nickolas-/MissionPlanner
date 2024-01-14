@@ -16,18 +16,37 @@ using static MAVLink;
 
 namespace SIGINT
 {
+    public class SigintSettings
+    {
+        public string Api { get; set; }
+        public int PollingSeconds { get; set; }
+    }
+    
     public class SigintService
     {
         private const int ProtocolVersion = 1;
         private SimpleTimer _timer;
-        private readonly HttpClient _httpClient = new HttpClient() { BaseAddress = new Uri("http://sigint.bavovna.ai/") };
+        private readonly HttpClient _httpClient;
         private readonly MAVLinkInterface _mAV;
+        private readonly SigintSettings _settings;
 
         public event EventHandler<List<SessionData>> OnSessionData;
         public event EventHandler<string> OnError;
 
         public SigintService(MAVLinkInterface mAV)
         {
+            try
+            {
+                var jsonContent = File.ReadAllText("sigint.config.json");
+                _settings = JsonConvert.DeserializeObject<SigintSettings>(jsonContent);
+                _httpClient = new HttpClient() { BaseAddress = new Uri(_settings.Api) };
+            }
+            catch (Exception e)
+            {
+                throw new ApplicationException("Api settings file not found or broken.");
+            }
+         
+        
             this._mAV = mAV;
         }
 
@@ -77,7 +96,7 @@ namespace SIGINT
 
         public void StartFetchingData()
         {
-            _timer = new SimpleTimer(CheckPeriodicData, TimeSpan.FromSeconds(5));
+            _timer = new SimpleTimer(CheckPeriodicData, TimeSpan.FromSeconds(_settings.PollingSeconds));
         }
 
         private async void CheckPeriodicData()
@@ -110,8 +129,9 @@ namespace SIGINT
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, ex.Message);
+                OnError?.Invoke(this, ex.StackTrace);
                 _timer.Dispose();
+                _timer = null;
             }
         }
 

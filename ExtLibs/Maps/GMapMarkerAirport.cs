@@ -29,7 +29,7 @@ namespace MissionPlanner.Maps
         public GMapMarker InnerMarker;
 
         // m
-        public int wprad = 9000;
+        public int wprad = 3000;
 
         public void ResetColor()
         {
@@ -57,6 +57,7 @@ namespace MissionPlanner.Maps
             Size = new System.Drawing.Size(50, 50);
             Offset = new System.Drawing.Point(-Size.Width/2, -Size.Height/2);
         }
+
 
         public override void OnRender(IGraphics g)
         {
@@ -97,7 +98,7 @@ namespace MissionPlanner.Maps
             {
                 //g.DrawArc(Pen, new System.Drawing.Rectangle(x, y, widtharc, heightarc), 0, 360);
 
-                g.FillPie(new SolidBrush(Color.FromArgb(25, Color.Red)), x, y, widtharc, heightarc, 0, 360);
+                g.FillPie(new SolidBrush(Color.FromArgb(25, Color.Blue)), x, y, widtharc, heightarc, 0, 360);
             }
         }
     }

@@ -1,0 +1,4 @@
+{
+  "api": "https://sigint.bavovna.ai/api/mp/v1/",
+  "pollingSeconds": 5
+}

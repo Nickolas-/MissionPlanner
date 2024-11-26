@@ -267,7 +267,7 @@ namespace GMap.NET.WindowsForms
                     }
                 }
 
-                foreach (GMapPolygon obj in Polygons)
+                foreach (GMapPolygon obj in Polygons.ToList())
                 {
                     if (obj.IsVisible)
                     {

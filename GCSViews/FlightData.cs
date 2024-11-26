@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -32,6 +33,11 @@ using ZedGraph;
 using LogAnalyzer = MissionPlanner.Utilities.LogAnalyzer;
 using TableLayoutPanelCellPosition = System.Windows.Forms.TableLayoutPanelCellPosition;
 using UnauthorizedAccessException = System.UnauthorizedAccessException;
+using SIGINT;
+using SkiaSharp;
+using SevenZip.Compression.LZ;
+using GMap.NET.WindowsForms.ToolTips;
+using MissionPlanner.Grid;
 
 // written by michael oborne
 
@@ -46,11 +52,14 @@ namespace MissionPlanner.GCSViews
         public static bool threadrun;
         public SplitContainer MainHcopy;
         internal static GMapOverlay geofence;
+        internal static GMapOverlay sigintOverlay;
         internal static GMapOverlay photosoverlay;
         internal static GMapOverlay poioverlay = new GMapOverlay("POI");
         internal static GMapOverlay rallypointoverlay;
         internal static GMapOverlay tfrpolygons;
         internal GMapMarker CurrentGMapMarker;
+
+        internal static SigintService SigintService;
 
         internal PointLatLng MouseDownStart;
 
@@ -252,6 +261,16 @@ namespace MissionPlanner.GCSViews
             myhud = hud1;
             MainHcopy = MainH;
 
+            if (SigintService == null)
+            {
+                LoadBitmaps();
+                SigintService = new SigintService(MainV2.comPort);
+                SigintService.StartFetchingData();
+                SigintService.OnError += SigintService_OnError;
+                SigintService.OnSessionData += SigintService_OnSessionData;
+            }
+            
+
             mymap.Paint += mymap_Paint;
 
             // populate the unmodified base list
@@ -364,6 +383,8 @@ namespace MissionPlanner.GCSViews
 
             gMapControl1.OnMarkerEnter += gMapControl1_OnMarkerEnter;
             gMapControl1.OnMarkerLeave += gMapControl1_OnMarkerLeave;
+            gMapControl1.OnPolygonClick += GMapControl1_OnPolygonClick;
+            gMapControl1.OnMarkerClick += GMapControl1OnOnMarkerClick;
 
             gMapControl1.RoutesEnabled = true;
             gMapControl1.PolygonsEnabled = true;
@@ -394,6 +415,9 @@ namespace MissionPlanner.GCSViews
 
             gMapControl1.Overlays.Add(poioverlay);
 
+            sigintOverlay = new GMapOverlay("Sigint");
+            gMapControl1.Overlays.Add(sigintOverlay);
+
             float gspeedMax = Settings.Instance.GetFloat("GspeedMAX");
             if (gspeedMax != 0)
             {
@@ -413,6 +437,162 @@ namespace MissionPlanner.GCSViews
 
             tabControlactions.Multiline = Settings.Instance.GetBoolean("tabControlactions_Multiline", false);
 
+        }
+
+        private static Bitmap A;
+        private static Bitmap B;
+        private static Bitmap Unkown;
+        private static void LoadBitmaps()
+        {
+            using (Bitmap pngImage = new Bitmap("a.png"))
+            {
+                A = new Bitmap(pngImage.Width, pngImage.Height, PixelFormat.Format32bppArgb);
+                using (Graphics graphics = Graphics.FromImage(A))
+                {
+                    graphics.DrawImage(pngImage, new Rectangle(0, 0, A.Width, A.Height));
+                }
+            }
+            
+            using (Bitmap pngImage = new Bitmap("b.png"))
+            {
+                B = new Bitmap(pngImage.Width, pngImage.Height, PixelFormat.Format32bppArgb);
+                using (Graphics graphics = Graphics.FromImage(B))
+                {
+                    graphics.DrawImage(pngImage, new Rectangle(0, 0, B.Width, B.Height));
+                }
+            }
+            
+            using (Bitmap pngImage = new Bitmap("unkown.png"))
+            {
+                Unkown = new Bitmap(pngImage.Width, pngImage.Height, PixelFormat.Format32bppArgb);
+                using (Graphics graphics = Graphics.FromImage(Unkown))
+                {
+                    graphics.DrawImage(pngImage, new Rectangle(0, 0, Unkown.Width, Unkown.Height));
+                }
+            }
+        }
+
+        private void SigintService_OnError(object sender, string e)
+        {
+            MessageBox.Show(e, "Api Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        private void SigintService_OnSessionData(object sender, List<SessionData> e)
+        {
+            sigintOverlay.Polygons.Clear();
+            sigintOverlay.Markers.Clear();
+            foreach(var sessionData in e) 
+            foreach (var data in sessionData.Data)
+            {
+                foreach (var point in data.Points)
+                {
+                    sigintOverlay.Markers.Add(new GMapMarkerSigint(new PointLatLng(point.Latitude, point.Longitude)));
+                }
+
+                Bitmap bitmap = Unkown;
+                var mhz = data.Freq / 1000000;
+                if(mhz >= 500 && mhz <= 1000) bitmap = A;
+                if(mhz >= 2400 && mhz <= 6000) bitmap = B;
+                
+                var mainMarker = new GMapMarkerDataSigint(new PointLatLng(data.CenterLat, data.CenterLong), bitmap);
+                mainMarker.Data = data;
+                sigintOverlay.Markers.Add(mainMarker);
+                DrawEllipse(new GeoArea(data.Points), data);
+            }
+        }
+
+        public void DrawEllipse(GeoArea geoArea, Data data)
+        {
+            // Determine the center point of the ellipse
+            double centerX = geoArea.Center.Longitude;
+            double centerY = geoArea.Center.Latitude;
+
+            // Determine the radii of the ellipse
+            double radiusX = geoArea.RadiusY < 1 ? 20 : geoArea.RadiusY * 1.5;
+            double radiusY = geoArea.RadiusX < 1 ? 20 : geoArea.RadiusX * 1.5; 
+
+            // Create a list of PointLatLng objects for the vertices of the ellipse
+            List<PointLatLng> vertices = new List<PointLatLng>();
+
+            for (int i = 0; i < 360; i++)
+            {
+                double angle = i * Math.PI / 180;
+
+                double lat = centerY + (radiusY / 111111) * Math.Sin(angle);
+                double lng = centerX + (radiusX / (111111 * Math.Cos(centerY * Math.PI / 180))) * Math.Cos(angle);
+
+                vertices.Add(new PointLatLng(lat, lng));
+            }
+
+            // Create a new GMapPolygon object using the vertices
+            var ellipse = new GMapDataPolygon(vertices, data.TargetId.ToString());
+            ellipse.Data = data;
+            ellipse.Fill = new SolidBrush(Color.FromArgb(50, Color.Green));
+            ellipse.Stroke = new Pen(Color.Red);
+            ellipse.IsHitTestVisible = true;
+
+            // Add the polygon to the overlay and redraw the map
+            sigintOverlay.Polygons.Add(ellipse);
+        }
+
+        private bool _infoWindowVisible;
+        
+        private void GMapControl1OnOnMarkerClick(GMapMarker item, object mouseeventargs)
+        {
+            if (_infoWindowVisible)
+                return;
+            
+            try
+            {
+                _infoWindowVisible = true;
+
+                if (!(item is GMapMarkerDataSigint marker))
+                    return;
+
+                var data = marker.Data as Data;
+                using (var polygonInfoForm = new PolygonInfo(data, SigintService))
+                {
+                    polygonInfoForm.StartPosition = FormStartPosition.CenterParent;
+                    MissionPlanner.Utilities.ThemeManager.ApplyThemeTo(polygonInfoForm);
+                    var dialogResult = polygonInfoForm.ShowDialog();
+                    polygonInfoForm.Close();
+                }
+
+                //MessageBox.Show($"Кілкість вимірювань: {data.NumPt} \n Частота проміння, Гц: {data.Freq} \n Магнітуда, дБ: {data.Mag} \n Координати цілі: {data.CenterLat}, {data.CenterLong} \n Тривалість імпульса, мс: {data.Width} \n Ширина проміня, рад:{data.Beam} \n Стандартне відхилення SD_x, м:{data.SdX} \n Стандартне відхилення SD_y, м: {data.SdY}\n Стандартне відхилення SD_avg, м: {data.SdAvg}\n Середня квадратична похибка, м:{data.Rmse}\n Площа невизначеності, м2:{data.Area}", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            finally
+            {
+                _infoWindowVisible = false;
+            }
+        }
+
+
+        private void GMapControl1_OnPolygonClick(GMapPolygon item, object mouseEventArgs)
+        {
+            if (_infoWindowVisible)
+                return;
+            try
+            {
+                _infoWindowVisible = true;
+
+                if (!(item is GMapDataPolygon dataPolygon))
+                    return;
+
+                var data = dataPolygon.Data as Data;
+                using (var polygonInfoForm = new PolygonInfo(data, SigintService))
+                {
+                    polygonInfoForm.StartPosition = FormStartPosition.CenterParent;
+                    MissionPlanner.Utilities.ThemeManager.ApplyThemeTo(polygonInfoForm);
+                    var dialogResult = polygonInfoForm.ShowDialog();
+                    polygonInfoForm.Close();
+                }
+
+                //MessageBox.Show($"Кілкість вимірювань: {data.NumPt} \n Частота проміння, Гц: {data.Freq} \n Магнітуда, дБ: {data.Mag} \n Координати цілі: {data.CenterLat}, {data.CenterLong} \n Тривалість імпульса, мс: {data.Width} \n Ширина проміня, рад:{data.Beam} \n Стандартне відхилення SD_x, м:{data.SdX} \n Стандартне відхилення SD_y, м: {data.SdY}\n Стандартне відхилення SD_avg, м: {data.SdAvg}\n Середня квадратична похибка, м:{data.Rmse}\n Площа невизначеності, м2:{data.Area}", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            finally
+            {
+                _infoWindowVisible = false;
+            }
         }
 
         public void Activate()
@@ -822,7 +1002,7 @@ namespace MissionPlanner.GCSViews
             if (marker != null)
                 marker.Dispose();
             if (aviwriter != null)
-                aviwriter.Dispose();
+                aviwriter.Dispose();            
 
             if (prop != null)
                 prop.Stop();

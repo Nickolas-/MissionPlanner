@@ -621,6 +621,29 @@
   <data name="BUT_SendMSG.ToolTip" xml:space="preserve">
     <value>Send message to be saved in vehicle log</value>
   </data>
+
+  <data name="GnssDeniedButton.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="GnssDeniedButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <!--<data name="GnssDeniedButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>117, 147</value>
+  </data>-->
+  <data name="GnssDeniedButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>51, 31</value>
+  </data>
+  <data name="GnssDeniedButton.TabIndex" type="System.Int32, mscorlib">
+    <value>123321</value>
+  </data>
+  <data name="GnssDeniedButton.Text" xml:space="preserve">
+    <value>GNSS Denied</value>
+  </data>
+  <data name="GnssDeniedButton.ToolTip" xml:space="preserve">
+    <value>Activate GNSS Denied mode</value>
+  </data>
+  
   <data name="&gt;&gt;BUT_SendMSG.Name" xml:space="preserve">
     <value>BUT_SendMSG</value>
   </data>

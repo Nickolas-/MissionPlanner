@@ -55,15 +55,22 @@ namespace MissionPlanner.Controls
 
         protected override Size DefaultSize => base.DefaultSize;
 
-        public MyButton()
+        public MyButton(
+            Color? backgroundGradientTop = null,
+            Color? backgroundGradientbottom = null,
+            Color? textColor = null,
+            Color? outline = null,
+            Color? disabled = null,
+            Color? mouseOver = null,
+            Color? mouseDown = null)
         {
-            _BGGradTop = Color.FromArgb(0x94, 0xc1, 0x1f);
-            _BGGradBot = Color.FromArgb(0xcd, 0xe2, 0x96);
-            _TextColor = Color.FromArgb(0x40, 0x57, 0x04);
-            _Outline = Color.FromArgb(0x79, 0x94, 0x29);
-            _ColorNotEnabled = Color.FromArgb(73, 0x2b, 0x3a, 0x03);
-            _ColorMouseOver = Color.FromArgb(73, 0x2b, 0x3a, 0x03);
-            _ColorMouseDown = Color.FromArgb(150, 0x2b, 0x3a, 0x03);
+            _BGGradTop = backgroundGradientTop ?? Color.FromArgb(0x94, 0xc1, 0x1f);
+            _BGGradBot = backgroundGradientbottom ?? Color.FromArgb(0xcd, 0xe2, 0x96);
+            _TextColor = textColor ?? Color.FromArgb(0x40, 0x57, 0x04);
+            _Outline = outline ?? Color.FromArgb(0x79, 0x94, 0x29);
+            _ColorNotEnabled = disabled ?? Color.FromArgb(73, 0x2b, 0x3a, 0x03);
+            _ColorMouseOver = mouseOver ?? Color.FromArgb(73, 0x2b, 0x3a, 0x03);
+            _ColorMouseDown = mouseDown ?? Color.FromArgb(150, 0x2b, 0x3a, 0x03);
         }
 
         protected override void OnPaint(PaintEventArgs pevent)

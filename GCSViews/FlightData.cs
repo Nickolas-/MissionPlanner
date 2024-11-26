@@ -1409,6 +1409,68 @@ namespace MissionPlanner.GCSViews
         }
 
 
+        private void GnssDeniedButton_Click(object sender, EventArgs e)
+        {
+            if (!MainV2.comPort.BaseStream.IsOpen)
+            {
+                MainV2.comPort.Open(true, true, true);
+
+                if (!MainV2.comPort.BaseStream.IsOpen)
+                {
+                    MessageBox.Show(
+                        "Failed to connect. Please try again.", "Error");
+                    return;
+                }
+            }
+
+            try
+            {
+                MainV2.comPort.setParam(
+                    (byte)MainV2.comPort.sysidcurrent, 
+                    (byte)MainV2.comPort.compidcurrent, 
+                    "GPS_PRIMARY", 
+                    1);
+
+                bool success = 
+                    MainV2.comPort.MAV.param.ContainsKey("GPS_PRIMARY") && 
+                    MainV2.comPort.MAV.param["GPS_PRIMARY"].Value == 1;
+
+                if (!success)
+                {
+                    MessageBox.Show("Failed to set GPS_PRIMARY parameter. Please try again.", "Error");
+                    return;
+                }
+
+                var rebootCommand = new MAVLink.mavlink_command_long_t
+                {
+                    target_system = (byte)MainV2.comPort.sysidcurrent,
+                    target_component = (byte)MainV2.comPort.compidcurrent,
+                    command = (ushort)MAVLink.MAV_CMD.PREFLIGHT_REBOOT_SHUTDOWN,
+                    confirmation = 0,
+                    param1 = 0,
+                    param2 = 0,
+                    param3 = 0,
+                    param4 = 0,
+                    param5 = 0,
+                    param6 = 0,
+                    param7 = 0
+                };
+
+                MainV2.comPort.sendPacket(
+                    rebootCommand,
+                    (byte)MainV2.comPort.sysidcurrent,
+                    (byte)MainV2.comPort.compidcurrent);
+
+                MessageBox.Show(
+                    "GNSS Denied mode activated. Secondary GPS enabled, and system rebooting.", 
+                    "Success");
+            }
+            catch
+            {
+                CustomMessageBox.Show(Strings.ErrorNoResponce, Strings.ERROR);
+            }
+        }        
+        
         private void BUT_SendMSG_Click(object sender, EventArgs e)
         {
             if (!MainV2.comPort.BaseStream.IsOpen)

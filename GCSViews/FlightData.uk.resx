@@ -288,7 +288,15 @@
   </data>
   <data name="BUT_SendMSG.ToolTip" xml:space="preserve">
     <value>Відправити повідомлення для збееження в журналі трансп.засобу</value>
+  </data>  
+  
+  <data name="GnssDeniedButton.Text" xml:space="preserve">
+    <value>GNSS Denied</value>
   </data>
+  <data name="GnssDeniedButton.ToolTip" xml:space="preserve">
+    <value>Activate GNSS Denied mode</value>
+  </data>  
+
   <data name="BUT_abortland.Text" xml:space="preserve">
     <value>Перервати посадку</value>
   </data>

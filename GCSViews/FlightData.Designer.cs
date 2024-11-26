@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Drawing;
+using System.Windows.Forms;
 
 namespace MissionPlanner.GCSViews
 {
@@ -48,6 +49,11 @@ namespace MissionPlanner.GCSViews
             this.quickView1 = new MissionPlanner.Controls.QuickView();
             this.tabActions = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+
+            this.GnssDeniedButton = new MissionPlanner.Controls.MyButton(
+                backgroundGradientTop: Color.FromArgb(255,152,0),
+                backgroundGradientbottom: Color.FromArgb(255,152,0));
+
             this.BUT_SendMSG = new MissionPlanner.Controls.MyButton();
             this.BUT_abortland = new MissionPlanner.Controls.MyButton();
             this.modifyandSetLoiterRad = new MissionPlanner.Controls.ModifyandSet();
@@ -736,6 +742,7 @@ namespace MissionPlanner.GCSViews
             // tableLayoutPanel1
             // 
             resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
+            this.tableLayoutPanel1.Controls.Add(this.GnssDeniedButton, 1, 4);
             this.tableLayoutPanel1.Controls.Add(this.BUT_SendMSG, 2, 4);
             this.tableLayoutPanel1.Controls.Add(this.BUT_abortland, 4, 4);
             this.tableLayoutPanel1.Controls.Add(this.modifyandSetLoiterRad, 4, 2);
@@ -760,6 +767,18 @@ namespace MissionPlanner.GCSViews
             this.tableLayoutPanel1.Controls.Add(this.BUT_quickauto, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.BUT_setmode, 1, 2);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+
+            // 
+            // GnssDeniedButton
+            // 
+            this.GnssDeniedButton.ColorMouseDown = System.Drawing.Color.Empty;
+            this.GnssDeniedButton.ColorMouseOver = System.Drawing.Color.Empty;
+            this.GnssDeniedButton.ColorNotEnabled = System.Drawing.Color.Empty;
+            resources.ApplyResources(this.GnssDeniedButton, "GnssDeniedButton");
+            this.GnssDeniedButton.Name = "GnssDeniedButton";
+            this.toolTip1.SetToolTip(this.GnssDeniedButton, resources.GetString("GnssDeniedButton.ToolTip"));
+            this.GnssDeniedButton.UseVisualStyleBackColor = false;
+            this.GnssDeniedButton.Click += new System.EventHandler(this.GnssDeniedButton_Click);
             // 
             // BUT_SendMSG
             // 
@@ -3104,6 +3123,7 @@ namespace MissionPlanner.GCSViews
         private System.Windows.Forms.TextBox NIC_tb;
         private ToolStripMenuItem showIconsToolStripMenuItem;
         private ToolStripMenuItem multiLineToolStripMenuItem;
+        private Controls.MyButton GnssDeniedButton;
         private Controls.MyButton BUT_SendMSG;
         public Panel panel_persistent;
         public System.Windows.Forms.TabPage tabAuxFunction;

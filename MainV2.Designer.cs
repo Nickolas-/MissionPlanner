@@ -199,7 +199,7 @@ namespace MissionPlanner
             resources.ApplyResources(this.MenuArduPilot, "MenuArduPilot");
             this.MenuArduPilot.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.MenuArduPilot.ForeColor = System.Drawing.Color.White;
-            this.MenuArduPilot.Image = global::MissionPlanner.Properties.Resources.logo_radiobird;
+            this.MenuArduPilot.Image = global::MissionPlanner.Properties.Resources.bavovna_logo;
             this.MenuArduPilot.Margin = new System.Windows.Forms.Padding(0, 0, 16, 0);
             this.MenuArduPilot.Name = "MenuArduPilot";
             this.MenuArduPilot.Click += new System.EventHandler(this.MenuArduPilot_Click);

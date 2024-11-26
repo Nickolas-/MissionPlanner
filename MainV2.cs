@@ -1073,8 +1073,8 @@ namespace MissionPlanner
                 this.Icon = Icon.FromHandle(((Bitmap) Program.IconFile).GetHicon());
             }
 
-            MenuArduPilot.Image = new Bitmap(Properties.Resources.logo_radiobird,
-                (int) (250), 40);
+            MenuArduPilot.Image = new Bitmap(Properties.Resources.bavovna_logo,
+                (int) (36), 40);
             MenuArduPilot.Width = MenuArduPilot.Image.Width;
 
             Application.DoEvents();

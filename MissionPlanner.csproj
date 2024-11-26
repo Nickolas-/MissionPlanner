@@ -78,6 +78,8 @@
     <Compile Remove="Msi\**" />
     <Compile Remove="plugins\**" />
     <Compile Remove="resedit\**" />
+    <Compile Remove="SIGINT\bin\**" />
+    <Compile Remove="SIGINT\obj\**" />
     <Compile Remove="SikRadio\**" />
     <Compile Remove="Updater\**" />
     <Compile Remove="wix\**" />
@@ -87,6 +89,8 @@
     <EmbeddedResource Remove="Msi\**" />
     <EmbeddedResource Remove="plugins\**" />
     <EmbeddedResource Remove="resedit\**" />
+    <EmbeddedResource Remove="SIGINT\bin\**" />
+    <EmbeddedResource Remove="SIGINT\obj\**" />
     <EmbeddedResource Remove="SikRadio\**" />
     <EmbeddedResource Remove="Updater\**" />
     <EmbeddedResource Remove="wix\**" />
@@ -97,6 +101,8 @@
     <None Remove="Msi\**" />
     <None Remove="plugins\**" />
     <None Remove="resedit\**" />
+    <None Remove="SIGINT\bin\**" />
+    <None Remove="SIGINT\obj\**" />
     <None Remove="SikRadio\**" />
     <None Remove="Updater\**" />
     <None Remove="wix\**" />
@@ -1364,6 +1370,9 @@
 
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Resources\bavovna-logo.png" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="SikRadio\ISikRadioForm.cs" />
     <Compile Include="SikRadio\RFD900.cs" />
     <Compile Include="SikRadio\RFDLib\Array.cs" />
@@ -1376,5 +1385,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="plugins\example23-switch.resx" />
+    <Content Include="Resources\bavovna-logo.png" />
   </ItemGroup>
 </Project>

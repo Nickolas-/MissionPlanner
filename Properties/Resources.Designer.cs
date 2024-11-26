@@ -1037,9 +1037,9 @@ namespace MissionPlanner.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap logo_radiobird {
+        public static System.Drawing.Bitmap bavovna_logo {
             get {
-                object obj = ResourceManager.GetObject("logo_radiobird", resourceCulture);
+                object obj = ResourceManager.GetObject("bavovna_logo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -59,6 +59,7 @@ namespace MissionPlanner.GCSViews
         internal static GMapOverlay tfrpolygons;
         internal GMapMarker CurrentGMapMarker;
 
+        internal static bool SigintDisabled = true; //!!!
         internal static SigintService SigintService;
 
         internal PointLatLng MouseDownStart;
@@ -261,7 +262,7 @@ namespace MissionPlanner.GCSViews
             myhud = hud1;
             MainHcopy = MainH;
 
-            if (SigintService == null)
+            if (SigintService == null && !SigintDisabled)
             {
                 LoadBitmaps();
                 SigintService = new SigintService(MainV2.comPort);
@@ -383,8 +384,12 @@ namespace MissionPlanner.GCSViews
 
             gMapControl1.OnMarkerEnter += gMapControl1_OnMarkerEnter;
             gMapControl1.OnMarkerLeave += gMapControl1_OnMarkerLeave;
-            gMapControl1.OnPolygonClick += GMapControl1_OnPolygonClick;
-            gMapControl1.OnMarkerClick += GMapControl1OnOnMarkerClick;
+
+            if (!SigintDisabled)
+            {
+                gMapControl1.OnPolygonClick += GMapControl1_OnPolygonClick;
+                gMapControl1.OnMarkerClick += GMapControl1OnOnMarkerClick;
+            }
 
             gMapControl1.RoutesEnabled = true;
             gMapControl1.PolygonsEnabled = true;
@@ -415,8 +420,11 @@ namespace MissionPlanner.GCSViews
 
             gMapControl1.Overlays.Add(poioverlay);
 
-            sigintOverlay = new GMapOverlay("Sigint");
-            gMapControl1.Overlays.Add(sigintOverlay);
+            if (!SigintDisabled)
+            {
+                sigintOverlay = new GMapOverlay("Sigint");
+                gMapControl1.Overlays.Add(sigintOverlay);
+            }
 
             float gspeedMax = Settings.Instance.GetFloat("GspeedMAX");
             if (gspeedMax != 0)
@@ -539,7 +547,7 @@ namespace MissionPlanner.GCSViews
         
         private void GMapControl1OnOnMarkerClick(GMapMarker item, object mouseeventargs)
         {
-            if (_infoWindowVisible)
+            if (SigintDisabled || _infoWindowVisible)
                 return;
             
             try
@@ -569,7 +577,7 @@ namespace MissionPlanner.GCSViews
 
         private void GMapControl1_OnPolygonClick(GMapPolygon item, object mouseEventArgs)
         {
-            if (_infoWindowVisible)
+            if (SigintDisabled || _infoWindowVisible)
                 return;
             try
             {

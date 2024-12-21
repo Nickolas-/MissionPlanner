@@ -643,6 +643,20 @@
   <data name="GnssDeniedButton.ToolTip" xml:space="preserve">
     <value>Activate GNSS Denied mode</value>
   </data>
+
+  <data name="GnssDeniedButtonColor" type="System.Drawing.Color, System.Drawing">
+    <value>#FF5722</value>
+  </data>
+  
+  <data name="GPSModeButton.Text" xml:space="preserve">
+    <value>GPS Mode</value>
+  </data>
+  <data name="GPSModeButton.ToolTip" xml:space="preserve">
+    <value>Restore GPS mode</value>
+  </data>
+  <data name="GPSModeButton" type="System.Drawing.Color, System.Drawing">
+    <value>#96c700</value>
+  </data>
   
   <data name="&gt;&gt;BUT_SendMSG.Name" xml:space="preserve">
     <value>BUT_SendMSG</value>

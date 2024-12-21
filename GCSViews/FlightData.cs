@@ -1417,7 +1417,19 @@ namespace MissionPlanner.GCSViews
         }
 
 
-        private void GnssDeniedButton_Click(object sender, EventArgs e)
+        private bool _gnssDeniedModeEnabled;
+
+        private object _gpsModeLocker = new object();
+
+        private void GPSModeButton_Click(object sender, EventArgs e)
+        {
+            lock (_gpsModeLocker)
+            {
+                GPSModeToggleCore();
+            }
+        }
+
+        private void GPSModeToggleCore()
         {
             if (!MainV2.comPort.BaseStream.IsOpen)
             {
@@ -1433,21 +1445,25 @@ namespace MissionPlanner.GCSViews
 
             try
             {
+                var newGPSPrimaryValue = _gnssDeniedModeEnabled ? 0 : 1;
+
                 MainV2.comPort.setParam(
                     (byte)MainV2.comPort.sysidcurrent, 
                     (byte)MainV2.comPort.compidcurrent, 
-                    "GPS_PRIMARY", 
-                    1);
+                    "GPS_PRIMARY",
+                    newGPSPrimaryValue);
 
-                bool success = 
+                bool successFullyChanged = 
                     MainV2.comPort.MAV.param.ContainsKey("GPS_PRIMARY") && 
-                    MainV2.comPort.MAV.param["GPS_PRIMARY"].Value == 1;
+                    MainV2.comPort.MAV.param["GPS_PRIMARY"].Value == newGPSPrimaryValue;
 
-                if (!success)
+                if (!successFullyChanged)
                 {
                     MessageBox.Show("Failed to set GPS_PRIMARY parameter. Please try again.", "Error");
                     return;
                 }
+
+                _gnssDeniedModeEnabled = !_gnssDeniedModeEnabled;
 
                 var rebootCommand = new MAVLink.mavlink_command_long_t
                 {
@@ -1469,9 +1485,29 @@ namespace MissionPlanner.GCSViews
                     (byte)MainV2.comPort.sysidcurrent,
                     (byte)MainV2.comPort.compidcurrent);
 
+                myhud.SetGPSModeLabelOverride(_gnssDeniedModeEnabled);
+
+                var resultSuccessModeText = newGPSPrimaryValue == 1
+                    ? "GNSS Denied mode activated. Secondary GPS enabled, and system rebooting."
+                    : "GPS mode restored. Primary GPS enabled, and system rebooting.";
+
+                if (_gnssDeniedModeEnabled)
+                {
+                    GnssDeniedButton.BackColor = Color.FromArgb(255, 183, 77); //Light Orange;
+                    GnssDeniedButton.Text = ResourceManager.GetString("GPSModeButton.Text");
+                    this.toolTip1.SetToolTip(this.GnssDeniedButton, ResourceManager.GetString("GPSModeButton.ToolTip"));
+                }
+                else 
+                {
+                    GnssDeniedButton.BackColor = Color.FromArgb(255, 150, 199, 0); //Lime Green;
+                    GnssDeniedButton.Text = ResourceManager.GetString("GnssDeniedButton.Text");
+                    this.toolTip1.SetToolTip(this.GnssDeniedButton, ResourceManager.GetString("GnssDeniedButton.ToolTip"));
+                }
+
                 MessageBox.Show(
-                    "GNSS Denied mode activated. Secondary GPS enabled, and system rebooting.", 
+                    resultSuccessModeText, 
                     "Success");
+
             }
             catch
             {

@@ -2898,8 +2898,19 @@ namespace MissionPlanner.Controls
                     Image icon = null;
 
                     int a = 0;
-                    foreach (var _fix in new[] { _gpsfix, _gpsfix2 })
+
+                    var fixListArray = new[] { _gpsfix, _gpsfix2 };
+                    var overrideGPS2WithBavovna = false;
+
+                    foreach (var _fix in fixListArray)
                     {
+                        if (_gnssGPSLabelOverrideEnabled && a == 0)
+                        {
+                            a++;
+                            overrideGPS2WithBavovna = true;
+                            continue;
+                        }
+
                         if (_fix == 0)
                         {
                             gps = (HUDT.GPS0);
@@ -2952,11 +2963,14 @@ namespace MissionPlanner.Controls
                         }
 
                         // gps2
-                        if (a == 1) gps = gps.Replace("GPS:", "GPS2:");
-                        // if nogps dont display
-                        if (a >= 1 && _fix == 0)
-                            continue;
+                        if (a == 1) 
+                            gps = overrideGPS2WithBavovna 
+                                ? gps.Replace("GPS:", "Bavovna:")
+                                : gps.Replace("GPS:", "GPS2:");
 
+                        // if nogps dont display
+                        if (a >= 1 && _fix == 0 && !overrideGPS2WithBavovna)
+                            continue;
 
                         int textIdx = (a == 0 && _gpsfix2 > 0) ? 0 : 1;
 
@@ -3777,6 +3791,12 @@ namespace MissionPlanner.Controls
             }
 
             Refresh();
+        }
+
+        private bool _gnssGPSLabelOverrideEnabled;
+        public void SetGPSModeLabelOverride(bool dnssDenied)
+        {
+            _gnssGPSLabelOverrideEnabled = dnssDenied;
         }
 
         [Browsable(false)]

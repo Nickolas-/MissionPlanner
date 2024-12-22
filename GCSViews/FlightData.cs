@@ -1418,6 +1418,7 @@ namespace MissionPlanner.GCSViews
 
 
         private bool _gnssDeniedModeEnabled;
+        private bool _gpsModeBusy;
 
         private object _gpsModeLocker = new object();
 
@@ -1425,9 +1426,28 @@ namespace MissionPlanner.GCSViews
         {
             lock (_gpsModeLocker)
             {
-                GPSModeToggleCore();
+                try
+                {
+                    if (_gpsModeBusy)
+                        return;
+
+                    _gpsModeBusy = true;
+
+                    GPSModeToggleCore();
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(
+                        $"{ex.Message}", "GPS / GNSS toggle error");
+                }
+                finally
+                {
+                    _gpsModeBusy = false;
+                }
             }
         }
+
 
         private void GPSModeToggleCore()
         {
@@ -1496,12 +1516,14 @@ namespace MissionPlanner.GCSViews
                     GnssDeniedButton.BackColor = Color.FromArgb(255, 183, 77); //Light Orange;
                     GnssDeniedButton.Text = ResourceManager.GetString("GPSModeButton.Text");
                     this.toolTip1.SetToolTip(this.GnssDeniedButton, ResourceManager.GetString("GPSModeButton.ToolTip"));
+                    lbl_sats.Hide();
                 }
                 else 
                 {
                     GnssDeniedButton.BackColor = Color.FromArgb(255, 150, 199, 0); //Lime Green;
                     GnssDeniedButton.Text = ResourceManager.GetString("GnssDeniedButton.Text");
                     this.toolTip1.SetToolTip(this.GnssDeniedButton, ResourceManager.GetString("GnssDeniedButton.ToolTip"));
+                    lbl_sats.Show();
                 }
 
                 MessageBox.Show(
